@@ -2,7 +2,7 @@
 
 A guarded recycle-bin sidecar for self-hosted n8n. It provides a dedicated UI/API route for archived workflows, retention metadata, reversible restore, and confirmation-gated permanent deletion.
 
-> **Current state:** public source repository and release candidate. The Docker image and npm CLI have passed local and disposable n8n validation but have not yet been published to GHCR or npm.
+> **Current state:** public source repository with GitHub Release `v0.1.2`. The GHCR image was pushed successfully but still requires public package visibility; npm publication is pending npm scope authorization.
 
 ## Supported target
 
