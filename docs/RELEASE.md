@@ -4,7 +4,7 @@
 
 | Surface | Name | Status |
 |---|---|---|
-| GitHub repository | `NinjaDataBuilder/n8n-workflow-recycle-bin` | Approved; repository not created yet |
+| GitHub repository | `NinjaDataBuilder/n8n-workflow-recycle-bin` | Created public; initial CI green |
 | OCI image | `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin` | Approved; version tags only |
 | npm CLI | `@ninjadatabuilder/n8n-workflow-recycle-bin` | Approved; package not published yet |
 | Private runtime package | `@ninjadatabuilder/n8n-workflow-recycle-bin-runtime` | Remains private; never publish as the community node |
