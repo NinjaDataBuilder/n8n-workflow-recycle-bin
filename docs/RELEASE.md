@@ -5,8 +5,8 @@
 | Surface | Name | Status |
 |---|---|---|
 | GitHub repository | `NinjaDataBuilder/n8n-workflow-recycle-bin` | Created public; initial CI green |
-| OCI image | `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin` | `v0.1.2` pushed; visibility still private |
-| npm CLI | `@ninjadatabuilder/n8n-workflow-recycle-bin` | Publish blocked until npm scope/authorization is provisioned |
+| OCI image | `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin` | Versioned image; verify package visibility independently |
+| npm CLI | `@ninjadatabuilder/n8n-workflow-recycle-bin` | Versioned public package; verify registry publication independently |
 | Private runtime package | `@ninjadatabuilder/n8n-workflow-recycle-bin-runtime` | Remains private; never publish as the community node |
 
 The optional community node, if created later, must use a separate package name and release lifecycle.

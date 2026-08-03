@@ -25,7 +25,7 @@ The public release will be installed with a pinned version:
 ```bash
 npx @ninjadatabuilder/n8n-workflow-recycle-bin install \
   --target /opt/n8n/compose \
-  --version 0.1.2 \
+  --version 0.1.3 \
   --n8n-version 2.32.5 \
   --network n8n_default \
   --n8n-internal-url http://n8n:5678 \
