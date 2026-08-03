@@ -81,7 +81,7 @@ jobs:
           archive="release/workflow-recycle-bin-v${{ steps.version.outputs.version }}.tar.gz"
           test -f "$archive"
           test -f release/SHA256SUMS
-          sha256sum --check release/SHA256SUMS
+          (cd release && sha256sum --check SHA256SUMS)
           listing="$(tar -tzf "$archive")"
           for forbidden in '.env' 'node_modules' 'cli/' 'test/' '.git/' '.tgz'; do
             if printf '%s\n' "$listing" | grep -Fq "$forbidden"; then
