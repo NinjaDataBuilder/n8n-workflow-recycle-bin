@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" role="img" aria-label="Workflow recycle bin">
+  <path d="M4 7h16" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M9 7V4.8c0-.442.358-.8.8-.8h4.4c.442 0 .8.358.8.8V7" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6.2 7l.78 12.07A1 1 0 0 0 7.978 20h8.044a1 1 0 0 0 .998-.93L17.8 7" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10 11v5M14 11v5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

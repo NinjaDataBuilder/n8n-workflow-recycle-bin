@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Workflow Recycle Bin - n8n</title>
+  <style>
+    :root{color-scheme:dark;--bg:#191919;--panel:#242424;--line:#3b3b3b;--ink:#f3f3f3;--muted:#aaa;--accent:#ff6d5a;--warn:#f7bd4e;font:14px ui-sans-serif,system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}.app{min-height:100vh}.content{max-width:1120px;margin:auto;padding:48px 40px}.title{display:flex;align-items:center;gap:12px}.title img{width:40px;height:40px}h1{font-size:27px;margin:0}.sub{color:var(--muted);margin:10px 0 30px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.toolbar-meta{display:flex;align-items:center;gap:12px}.searchbox{display:flex;align-items:center;flex-wrap:wrap;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:6px;width:420px;min-height:42px;padding:6px 9px;transition:border-color .14s ease,box-shadow .14s ease}.searchbox:focus-within{border-color:#9c6ade;box-shadow:0 0 0 2px rgba(156,106,222,.28)}.search-icon{width:17px;height:17px;flex:0 0 auto;color:var(--muted)}.search-tags{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.search{flex:1;min-width:130px;background:transparent;border:0;color:var(--ink);padding:4px 2px;outline:0;font:inherit}.search::placeholder{color:var(--muted)}.search-tag{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(156,106,222,.58);border-radius:999px;background:rgba(156,106,222,.16);color:#e9dcff;padding:3px 7px 3px 9px;font-size:12px}.tag-remove{border:0;background:transparent;color:#d8c5f5;padding:0 2px;line-height:1;cursor:pointer}.search-tag .tag-remove:hover:not(:disabled){border-color:transparent;background:transparent;box-shadow:none;color:#fff}.count{color:var(--muted)}.table{border:1px solid var(--line);border-radius:8px;overflow:hidden}.head,.row{display:grid;grid-template-columns:1.5fr 150px 180px 170px;gap:20px;align-items:center;padding:14px 18px}.head{background:#202020;color:var(--muted);font-size:12px}.row{border-top:1px solid var(--line);min-height:72px}.name{font-weight:600}.meta{font-size:12px;color:var(--muted);margin-top:4px}.due{color:var(--warn);font-size:13px}.due-suspended{color:var(--warn)}.due-eligible{color:#f28b82}.retention-label{line-height:1.25}.retention-track{height:5px;margin-top:8px;background:#3a3020;border-radius:999px;overflow:hidden}.retention-fill{height:100%;background:var(--warn);border-radius:inherit;transition:width .3s ease}.due-eligible .retention-track{background:#432725}.due-eligible .retention-fill{background:#f28b82}.retention-detail{margin-top:5px;color:var(--muted);font-size:11px}button{border:1px solid var(--line);border-radius:5px;background:#353535;color:#fff;padding:8px 10px;font:inherit;cursor:pointer;transition:border-color .14s ease,box-shadow .14s ease,background-color .14s ease}button:hover:not(:disabled){background:#454545;border-color:#9c6ade;box-shadow:0 0 0 2px rgba(156,106,222,.28)}button:focus-visible:not(:disabled){border-color:#9c6ade;outline:2px solid rgba(156,106,222,.72);outline-offset:2px;box-shadow:0 0 0 2px rgba(156,106,222,.24)}button:disabled{color:#aaa;cursor:not-allowed;opacity:.75}.restore{border-color:#53636f}.actions{display:flex;gap:8px;justify-content:flex-end}.notice{min-height:22px;margin:0 0 12px;color:#9ad7ad}.notice.failure{color:#ffb4b4}.empty,.error{padding:42px 20px;text-align:center;color:var(--muted);border-top:1px solid var(--line)}.error{color:#ffb4b4}.hidden{display:none}@media(max-width:760px){.content{padding:28px 18px}.toolbar{align-items:flex-start;flex-direction:column}.searchbox{width:100%}.head{display:none}.row{grid-template-columns:1fr;gap:8px}.actions{justify-content:flex-start}}
+  </style>
+  <style>
+    .permanent-delete{margin-left:6px}.permanent-delete:not(:disabled):hover,.permanent-delete:not(:disabled):focus-visible{border-color:#9c6ade;box-shadow:0 0 0 2px rgba(156,106,222,.28)}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="content">
+      <div class="title"><img src="assets/recycle-bin-trash.svg?v=2" alt=""><h1>Workflow Recycle Bin</h1></div>
+      <p class="sub">Restore is available. Permanent deletion requires permission, an archived-state reread, and literal confirmation.</p>
+      <div class="notice" id="notice" role="status" aria-live="polite"></div>
+      <div class="toolbar">
+        <div class="toolbar-meta">
+          <span class="count" id="count">Loading…</span>
+          <button type="button" class="refresh" id="refresh" aria-label="Refresh list">↻ <span>Refresh</span></button>
+        </div>
+        <div class="searchbox">
+          <svg class="search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+          </svg>
+          <div class="search-tags" id="search-tags"></div>
+          <input type="text" class="search" id="search" placeholder="Search: use commas to create filters" aria-label="Search archived workflows" autocomplete="off" spellcheck="false" disabled>
+        </div>
+      </div>
+      <section class="table">
+        <div class="head"><span>Workflow</span><span>Archived at</span><span>Automatic deletion</span><span></span></div>
+        <div id="rows"></div>
+        <div class="empty hidden" id="empty">No archived workflows are visible to your account.</div>
+        <div class="error hidden" id="error"></div>
+      </section>
+    </section>
+  </main>
+  <script type="module">
+    import { appendSearchTerm, buildSearchFeedback, consumeDelimitedInput, filterWorkflowItems } from './assets/workflow-search.mjs?v=2';
+    import { getRetentionDisplay } from './assets/retention-display.mjs?v=1';
+
+    const rows = document.querySelector('#rows');
+    const count = document.querySelector('#count');
+    const refresh = document.querySelector('#refresh');
+    const search = document.querySelector('#search');
+    const searchTags = document.querySelector('#search-tags');
+    const empty = document.querySelector('#empty');
+    const error = document.querySelector('#error');
+    const notice = document.querySelector('#notice');
+    const pushRefKey = 'workflow-recycle-bin-push-ref';
+    let items = [];
+    let searchTerms = [];
+
+    function browserIdentity() {
+      const browserId = localStorage.getItem('n8n-browserId');
+      if (!browserId) throw new Error('Open the n8n editor first and sign in again.');
+      return browserId;
+    }
+    function pushRef() {
+      let value = sessionStorage.getItem(pushRefKey);
+      if (!value) { value = crypto.randomUUID(); sessionStorage.setItem(pushRefKey, value); }
+      return value;
+    }
+    function showNotice(message, failure = false) {
+      notice.textContent = message;
+      notice.classList.toggle('failure', failure);
+    }
+    function activeSearchTerms() {
+      return appendSearchTerm(searchTerms, search.value);
+    }
+    function renderSearchTags() {
+      searchTags.replaceChildren();
+      searchTerms.forEach((term, index) => {
+        const tag = document.createElement('span'); tag.className = 'search-tag';
+        const label = document.createElement('span'); label.textContent = term;
+        const remove = document.createElement('button');
+        remove.type = 'button'; remove.className = 'tag-remove'; remove.textContent = '×';
+        remove.setAttribute('aria-label', `Remove filter ${term}`);
+        remove.addEventListener('click', () => {
+          searchTerms = searchTerms.filter((_, candidateIndex) => candidateIndex !== index);
+          renderSearchTags(); render(); search.focus();
+        });
+        tag.append(label, remove); searchTags.append(tag);
+      });
+    }
+
+    function date(value) {
+      return value ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(value)) : 'Not recorded';
+    }
+    function retention(item) {
+      const display = getRetentionDisplay(item);
+      const due = document.createElement('div');
+      due.className = `due due-${display.state}`;
+      const label = document.createElement('div');
+      label.className = 'retention-label';
+      label.textContent = display.label;
+      due.append(label);
+      if (display.progressPercent !== null) {
+        const track = document.createElement('div');
+        track.className = 'retention-track';
+        track.setAttribute('aria-label', `${display.progressPercent}% of the retention period elapsed`);
+        const fill = document.createElement('div');
+        fill.className = 'retention-fill';
+        fill.style.width = `${display.progressPercent}%`;
+        track.append(fill);
+        const detail = document.createElement('div');
+        detail.className = 'retention-detail';
+        detail.textContent = display.detail;
+        due.append(track, detail);
+      } else {
+        const detail = document.createElement('div');
+        detail.className = 'retention-detail';
+        detail.textContent = display.detail;
+        due.append(detail);
+      }
+      return due;
+    }
+    function render() {
+      const query = activeSearchTerms();
+      const visible = filterWorkflowItems(items, query);
+      rows.replaceChildren();
+      for (const item of visible) {
+        const row = document.createElement('div'); row.className = 'row';
+        const identity = document.createElement('div');
+        const name = document.createElement('div'); name.className = 'name'; name.textContent = item.workflowName;
+        const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = item.project || 'Project not provided';
+        identity.append(name, meta);
+        const archived = document.createElement('div'); archived.textContent = date(item.archivedAt);
+        const due = retention(item);
+        const actions = document.createElement('div'); actions.className = 'actions';
+        const restore = document.createElement('button');
+        restore.className = 'restore'; restore.textContent = 'Restore'; restore.disabled = !item.canDelete;
+        restore.title = item.canDelete ? 'Restore this workflow' : 'Your account cannot restore this workflow';
+        restore.addEventListener('click', () => restoreWorkflow(item, restore));
+        const permanentDelete = document.createElement('button');
+        permanentDelete.className = 'permanent-delete';
+        permanentDelete.textContent = 'Delete now';
+        permanentDelete.disabled = !item.canDelete;
+        permanentDelete.title = item.canDelete ? 'Permanently delete this workflow' : 'Your account cannot delete this workflow';
+        permanentDelete.addEventListener('click', () => permanentlyDeleteWorkflow(item, permanentDelete));
+        actions.append(restore, permanentDelete);
+        row.append(identity, archived, due, actions); rows.append(row);
+      }
+      const feedback = buildSearchFeedback(items.length, visible.length, query);
+      count.textContent = feedback.countText;
+      empty.textContent = feedback.emptyText;
+      empty.classList.toggle('hidden', visible.length !== 0);
+    }
+
+    async function permanentlyDeleteWorkflow(item, button) {
+      const confirmationText = window.prompt(`To permanently delete “${item.workflowName}”, type DELETAR.`);
+      if (confirmationText !== 'DELETAR') {
+        showNotice('Deletion cancelled.');
+        return;
+      }
+      button.disabled = true;
+      button.textContent = 'Deleting…';
+      showNotice('');
+      try {
+        const response = await fetch(`api/recycle-bin/${encodeURIComponent(item.workflowId)}/permanent-delete`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            'browser-id': browserIdentity(),
+          },
+          body: JSON.stringify({ confirmationText }),
+        });
+        if (response.status === 401) throw new Error('Your n8n session expired. Sign in again.');
+        if (response.status === 403) throw new Error('Your account does not have permission to delete this workflow.');
+        if (response.status === 404) throw new Error('The workflow is no longer archived or is not visible to your account.');
+        if (response.status === 409 || response.status === 423) throw new Error('The workflow is open or locked in another tab.');
+        if (!response.ok) throw new Error('n8n declined the deletion. The workflow was not changed.');
+        items = items.filter((candidate) => candidate.workflowId !== item.workflowId);
+        render();
+        showNotice(`Workflow “${item.workflowName}” permanently deleted.`);
+      } catch (failure) {
+        button.disabled = !item.canDelete;
+        button.textContent = 'Delete now';
+        showNotice(failure.message, true);
+      }
+    }
+
+    async function restoreWorkflow(item, button) {
+      button.disabled = true;
+      button.textContent = 'Restoring…';
+      showNotice('');
+      try {
+        const response = await fetch(`/rest/workflows/${encodeURIComponent(item.workflowId)}/unarchive`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            'browser-id': browserIdentity(),
+            'push-ref': pushRef(),
+          },
+          body: '{}',
+        });
+        if (response.status === 401) throw new Error('Your n8n session expired. Sign in again.');
+        if (response.status === 403) throw new Error('Your account does not have permission to restore this workflow.');
+        if (response.status === 409 || response.status === 423) throw new Error('The workflow is open or locked in another tab. Close the editor and try again.');
+        if (!response.ok) throw new Error('n8n declined the restore. The workflow was not changed.');
+        items = items.filter((candidate) => candidate.workflowId !== item.workflowId);
+        render();
+        showNotice(`Workflow “${item.workflowName}” restored successfully.`);
+      } catch (failure) {
+        button.disabled = !item.canDelete;
+        button.textContent = 'Restore';
+        showNotice(failure.message, true);
+      }
+    }
+
+    let loading = false;
+    async function load() {
+      if (loading) return;
+      loading = true;
+      refresh.disabled = true;
+      refresh.textContent = 'Refreshing…';
+      error.classList.add('hidden');
+      try {
+        const browserId = browserIdentity();
+        const response = await fetch('api/recycle-bin', { credentials: 'same-origin', headers: { 'browser-id': browserId, accept: 'application/json' } });
+        if (response.status === 401) throw new Error('Your n8n session could not be validated. Sign in again.');
+        if (!response.ok) throw new Error('The Recycle Bin could not query n8n right now.');
+        items = (await response.json()).items;
+        search.disabled = false; render();
+      } finally {
+        loading = false;
+        refresh.disabled = false;
+        refresh.textContent = '↻ Refresh';
+      }
+    }
+    refresh.addEventListener('click', async () => {
+      showNotice('Refreshing…');
+      try {
+        await load();
+        showNotice('List refreshed.');
+      } catch (failure) {
+        error.textContent = failure.message;
+        error.classList.remove('hidden');
+        showNotice('Could not refresh the list.', true);
+      }
+    });
+    search.addEventListener('input', () => {
+      const parsed = consumeDelimitedInput(search.value);
+      if (parsed.committed.length > 0) {
+        for (const term of parsed.committed) searchTerms = appendSearchTerm(searchTerms, term);
+        search.value = parsed.remainder;
+        renderSearchTags();
+      }
+      render();
+    });
+    search.addEventListener('keydown', (event) => {
+      if (event.key === ',' || event.key === 'Enter') {
+        if (!search.value.trim()) return;
+        event.preventDefault();
+        searchTerms = appendSearchTerm(searchTerms, search.value);
+        search.value = '';
+        renderSearchTags(); render();
+        return;
+      }
+      if (event.key === 'Backspace' && search.value === '' && searchTerms.length > 0) {
+        searchTerms = searchTerms.slice(0, -1);
+        renderSearchTags(); render();
+      }
+    });
+    setInterval(() => { if (!loading && items.length > 0) render(); }, 60000);
+    load().catch((failure) => { count.textContent = 'Unavailable'; error.textContent = failure.message; error.classList.remove('hidden'); });
+  </script>
+</body>
+</html>

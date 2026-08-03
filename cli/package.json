@@ -1,0 +1,34 @@
+{
+  "name": "@ninjadatabuilder/n8n-workflow-recycle-bin",
+  "version": "0.1.2",
+  "description": "Safe installer CLI for the Workflow Recycle Bin sidecar for self-hosted n8n.",
+  "type": "module",
+  "bin": {
+    "workflow-recycle-bin": "src/cli.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin#readme",
+  "bugs": {
+    "url": "https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "npm test"
+  },
+  "license": "MIT",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
+}

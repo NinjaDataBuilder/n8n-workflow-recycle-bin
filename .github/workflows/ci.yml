@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: cli/package.json
+      - name: Test runtime
+        run: npm test
+      - name: Test CLI
+        working-directory: cli
+        run: npm test
+      - name: Check syntax
+        run: |
+          node --check src/main.mjs
+          node --check scripts/package-release.mjs
+          node --check cli/src/cli.mjs
+          node --check hooks/workflow-recycle-bin.cjs
+      - name: Build release bundle
+        run: npm run release:bundle
+      - name: Build Docker image
+        run: docker build --build-arg RELEASE_VERSION=${{ github.sha }} -t workflow-recycle-bin:ci .
+      - name: Check package contents
+        working-directory: cli
+        run: npm pack --dry-run

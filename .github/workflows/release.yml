@@ -1,0 +1,189 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin
+
+jobs:
+  validate:
+    name: Validate release candidate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Resolve and verify release version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          [[ "$tag" == v*.*.* ]] || { echo "Tag must use vX.Y.Z" >&2; exit 1; }
+          node - "$version" <<'NODE'
+          const fs = require('node:fs');
+          const expected = process.argv[2];
+          const runtime = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const cli = JSON.parse(fs.readFileSync('cli/package.json', 'utf8'));
+          if (runtime.version !== expected) throw new Error(`Runtime version ${runtime.version} does not match ${expected}`);
+          if (cli.version !== expected) throw new Error(`CLI version ${cli.version} does not match ${expected}`);
+          if (cli.private === true) throw new Error('CLI package must not be private for a public release');
+          console.log(`release_version=${expected}`);
+          NODE
+          {
+            echo "version=$version"
+            echo "tag=$tag"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Test runtime
+        run: npm test
+
+      - name: Test CLI
+        working-directory: cli
+        run: npm test
+
+      - name: Check syntax
+        run: |
+          node --check src/main.mjs
+          node --check src/policy.mjs
+          node --check scripts/package-release.mjs
+          node --check cli/src/cli.mjs
+          node --check hooks/workflow-recycle-bin.cjs
+
+      - name: Check whitespace
+        run: git diff --check
+
+      - name: Build release bundle
+        run: npm run release:bundle
+
+      - name: Audit release bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="release/workflow-recycle-bin-v${{ steps.version.outputs.version }}.tar.gz"
+          test -f "$archive"
+          test -f release/SHA256SUMS
+          sha256sum --check release/SHA256SUMS
+          listing="$(tar -tzf "$archive")"
+          for forbidden in '.env' 'node_modules' 'cli/' 'test/' '.git/' '.tgz'; do
+            if printf '%s\n' "$listing" | grep -Fq "$forbidden"; then
+              echo "Forbidden release entry: $forbidden" >&2
+              exit 1
+            fi
+          done
+
+      - name: Build Docker image
+        run: docker build --build-arg RELEASE_VERSION=${{ steps.version.outputs.version }} -t release-validation .
+
+      - name: Pack and inspect CLI
+        working-directory: cli
+        run: npm pack --dry-run --json
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-recycle-bin-release-${{ steps.version.outputs.version }}
+          if-no-files-found: error
+          path: |
+            release/workflow-recycle-bin-v${{ steps.version.outputs.version }}.tar.gz
+            release/SHA256SUMS
+
+  publish-image:
+    name: Publish GHCR image
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Publish versioned image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            RELEASE_VERSION=${{ needs.validate.outputs.version }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}
+            ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin
+            org.opencontainers.image.version=${{ needs.validate.outputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+  publish-github-release:
+    name: Create GitHub Release
+    needs: [validate, publish-image]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: workflow-recycle-bin-release-${{ needs.validate.outputs.version }}
+          path: release
+
+      - name: Create release with bundle and checksum
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ needs.validate.outputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --verify-tag \
+            --title "Workflow Recycle Bin ${{ needs.validate.outputs.tag }}" \
+            --generate-notes \
+            "release/workflow-recycle-bin-v${{ needs.validate.outputs.version }}.tar.gz" \
+            release/SHA256SUMS
+
+  publish-npm:
+    name: Publish CLI to npm
+    needs: [validate, publish-github-release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js with npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Publish CLI with provenance
+        working-directory: cli
+        run: npm publish --access public --provenance

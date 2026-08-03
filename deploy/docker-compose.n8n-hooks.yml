@@ -1,0 +1,9 @@
+# Additive overlay for n8n 2.32.x External Hooks.
+# Apply only with the parent Compose file and its existing root-only env file.
+# This changes only n8n-editor because archive/unarchive REST actions execute there.
+services:
+  n8n-editor:
+    env_file:
+      - /opt/databuilder/env/recycle-bin-hook.env
+    environment:
+      EXTERNAL_HOOK_FILES: /home/node/.n8n/custom/workflow-recycle-bin.cjs

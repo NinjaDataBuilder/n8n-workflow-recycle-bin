@@ -1,0 +1,30 @@
+{
+  "name": "@ninjadatabuilder/n8n-workflow-recycle-bin-runtime",
+  "version": "0.1.2",
+  "private": true,
+  "description": "Portable, guarded workflow recycle bin runtime for self-hosted n8n.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "npm test",
+    "release:bundle": "node scripts/package-release.mjs"
+  },
+  "license": "MIT",
+  "files": [
+    "app",
+    "deploy",
+    "docs",
+    "hooks",
+    "scripts/preflight.mjs",
+    "scripts/uninstall.sh",
+    "src",
+    ".dockerignore",
+    ".env.example",
+    "Dockerfile",
+    "docker-entrypoint.sh",
+    "package.json"
+  ]
+}
