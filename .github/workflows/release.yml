@@ -83,12 +83,10 @@ jobs:
           test -f release/SHA256SUMS
           (cd release && sha256sum --check SHA256SUMS)
           listing="$(tar -tzf "$archive")"
-          for forbidden in '.env' 'node_modules' 'cli/' 'test/' '.git/' '.tgz'; do
-            if printf '%s\n' "$listing" | grep -Fq "$forbidden"; then
-              echo "Forbidden release entry: $forbidden" >&2
-              exit 1
-            fi
-          done
+          if printf '%s\n' "$listing" | grep -Eq '(^|/)\.env($|/)|(^|/)node_modules(/|$)|(^|/)cli(/|$)|(^|/)test(/|$)|(^|/)\.git(/|$)|\.tgz$'; then
+            echo 'Forbidden release entry detected' >&2
+            exit 1
+          fi
 
       - name: Build Docker image
         run: docker build --build-arg RELEASE_VERSION=${{ steps.version.outputs.version }} -t release-validation .
