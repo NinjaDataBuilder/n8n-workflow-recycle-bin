@@ -1,85 +1,125 @@
-# Workflow Recycle Bin
+# 🗑️ n8n Workflow Recycle Bin
 
-A guarded recycle-bin sidecar for self-hosted n8n. It provides a dedicated UI/API route for archived workflows, retention metadata, reversible restore, and confirmation-gated permanent deletion.
+[![CI](https://img.shields.io/github/actions/workflow/status/NinjaDataBuilder/n8n-workflow-recycle-bin/ci.yml?branch=main&label=CI)](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/NinjaDataBuilder/n8n-workflow-recycle-bin?display_name=tag&label=release)](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/releases)
+[![License](https://img.shields.io/github/license/NinjaDataBuilder/n8n-workflow-recycle-bin)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-22%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+[![n8n](https://img.shields.io/badge/n8n-self--hosted-EA4B71?logo=n8n&logoColor=white)](https://n8n.io/)
 
-> **Current state:** public source repository with GitHub Release `v0.1.2`. The GHCR image was pushed successfully but still requires public package visibility; npm publication is pending npm scope authorization.
+A guarded sidecar for **self-hosted n8n** that archives workflows, preserves retention metadata, supports reversible restore, and protects permanent deletion behind explicit confirmation.
 
-## Supported target
+> [!IMPORTANT]
+> The public source repository and GitHub Release `v0.1.2` are available. The supported target is self-hosted n8n `2.32.x`, initially validated against n8n `2.32.5`.
 
-- self-hosted n8n running with Docker Compose;
-- n8n `2.32.x` only, initially tested with `2.32.5`;
-- Docker Engine with the Compose plugin;
-- an existing external Docker network shared with the n8n service;
-- an n8n browser/session boundary that the sidecar can validate.
+> [!WARNING]
+> The GHCR image has been built and pushed as `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin:0.1.2`, but the container package is currently private. The npm installer is prepared but not yet published. Use the GitHub Release bundle until those distribution surfaces are enabled.
 
-n8n Cloud and unverified community-node installation are not supported by this sidecar architecture.
+<hr>
 
-## Architecture
+## 🧭 Start here
+
+| If you are... | Start with |
+| --- | --- |
+| Evaluating the project | [Architecture and supported target](#-architecture) |
+| Installing for the first time | [Safe installation path](#-safe-installation-path) |
+| Reviewing risk | [Security boundaries](#-security-boundaries) |
+| Operating a deployment | [Installation guide](docs/INSTALL.md) |
+| Reviewing the release | [Release notes and assets](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/releases/tag/v0.1.2) |
+| Contributing or debugging | [Development checks](#-development-checks) |
+
+## 🎯 What it is
+
+The Workflow Recycle Bin is a **sidecar service**, not a replacement for n8n. It stays beside an existing n8n deployment and provides a guarded lifecycle for workflows that would otherwise be archived or permanently deleted without a dedicated review surface.
+
+The runtime combines:
+
+- a small UI/API surface for archived workflows;
+- n8n API and session validation;
+- lifecycle hook integration;
+- retention metadata and scheduler support;
+- an audit store;
+- a CLI that stages, validates, upgrades, and uninstalls the sidecar.
+
+## 🚫 What it is not
+
+- It is not an n8n Cloud feature.
+- It is not a traditional community node for the canvas.
+- It does not replace the parent n8n Compose project.
+- It does not accept secrets as CLI arguments.
+- It does not silently delete workflows.
+- It does not make production retention safe without staging and disposable-resource tests.
+
+## 🏗️ Architecture
 
 ```text
 existing n8n Compose project
-          │
-          └── existing external Docker network
-                    │
-                    └── isolated Workflow Recycle Bin sidecar
-                          ├── versioned Docker image
-                          ├── file-backed hook secret
-                          ├── dedicated audit-data volume
-                          └── optional version-tested UI adapter
+│
+├── n8n service
+│   ├── authenticated browser/session boundary
+│   └── lifecycle hook
+│
+└── external Docker network
+    │
+    └── Workflow Recycle Bin sidecar
+        ├── guarded UI/API
+        ├── n8n API/session bridge
+        ├── file-backed hook secret
+        ├── audit-data volume
+        └── retention scheduler
 ```
 
-The installer never replaces the parent n8n Compose project. The sidecar has no host-published port by default. Permanent deletion remains server-mediated and confirmation-gated.
+The installer operates alongside the existing deployment. It does not recreate n8n, replace PostgreSQL or Redis, or take ownership of the parent Compose project.
 
-## Local release candidate
+## ✅ Supported target
 
-Build and test the runtime:
+| Requirement | Initial support |
+| --- | --- |
+| n8n | Self-hosted `2.32.x` |
+| Reference validation | n8n `2.32.5` |
+| Runtime | Node.js `22+` |
+| Deployment | Docker Engine with Compose plugin |
+| Network | Existing external Docker network shared with n8n |
+| Cloud | n8n Cloud is not supported by this sidecar architecture |
+
+> [!NOTE]
+> Compatibility is intentionally narrow in the first release. Validate a newer n8n version in a disposable environment before using it in production.
+
+## 🚀 Safe installation path
+
+### 1. Download the pinned release bundle
+
+Use the GitHub Release asset and checksum instead of an unpinned branch archive:
 
 ```bash
-npm test
-npm run release:bundle
-sudo -n docker build --build-arg RELEASE_VERSION=0.1.2 \
-  -t workflow-recycle-bin:0.1.2 .
+gh release download v0.1.2 \
+  --repo NinjaDataBuilder/n8n-workflow-recycle-bin \
+  --pattern 'workflow-recycle-bin-v0.1.2.tar.gz' \
+  --pattern 'SHA256SUMS'
+
+sha256sum --check SHA256SUMS
 ```
 
-Test the CLI:
+### 2. Run the preflight before changing a deployment
+
+Extract the bundle into a staging directory and validate the target n8n version before mounting hooks or starting the sidecar.
 
 ```bash
-cd cli
-npm test
-node src/cli.mjs --help
+tar -xzf workflow-recycle-bin-v0.1.2.tar.gz
+cd workflow-recycle-bin-v0.1.2
+node scripts/preflight.mjs --n8n-version 2.32.5
 ```
 
-## Installation through the CLI
+### 3. Configure only non-secret values
 
-After a public release, the intended user-facing flow will be:
+Copy `.env.example` to `.env` and set the existing network, internal n8n URL, and release version. Create the hook-token file separately with mode `600`.
 
 ```bash
-npx @ninjadatabuilder/n8n-workflow-recycle-bin install \
-  --target /opt/n8n/compose \
-  --version 0.1.2 \
-  --n8n-version 2.32.5 \
-  --network n8n_default \
-  --n8n-internal-url http://n8n:5678 \
-  --hook-token-file /opt/n8n/secrets/recycle-bin-hook-token \
-  --start
+install -m 600 /dev/null /opt/n8n/secrets/recycle-bin-hook-token
+# Write the token through your secret-management process; never place it in Git or chat.
 ```
 
-The CLI will:
-
-1. verify Node, Docker, Compose, target Compose, and n8n compatibility;
-2. download the pinned GitHub release bundle and verify `SHA256SUMS`;
-3. stage the sidecar under `workflow-recycle-bin/`;
-4. preserve a timestamped backup of an existing installation;
-5. write only non-secret configuration to a mode `600` `.env` file;
-6. validate `docker compose config`;
-7. pull and start only the sidecar when `--start` is explicitly supplied;
-8. preserve the named data volume during uninstall.
-
-Use `--dry-run` to inspect the intended target without writing or invoking Docker. The CLI never accepts a token value as an argument.
-
-## Manual Docker installation
-
-The release bundle contains `deploy/docker-compose.sidecar.yml`. Copy `.env.example` to `.env`, set the existing n8n network and internal URL, create the hook-token file with mode `600`, and validate:
+### 4. Render and review Compose
 
 ```bash
 docker compose \
@@ -89,29 +129,68 @@ docker compose \
   config --quiet
 ```
 
-Start only the sidecar after reviewing the rendered configuration:
+Start only after reviewing the rendered configuration. The CLI uses `--dry-run` for a no-write preview and requires an explicit start option for container startup.
+
+See the complete [installation guide](docs/INSTALL.md) and [Portuguese guide](docs/INSTALL.pt-BR.md) for staging, hooks, backup, upgrade, rollback, and uninstall.
+
+## 🔄 Lifecycle and safety model
+
+| Action | Result | Guard |
+| --- | --- | --- |
+| Archive | Keeps the workflow recoverable and records retention metadata | Authenticated n8n session and hook token |
+| Restore | Returns the workflow through the n8n API | Valid session and resource visibility |
+| Retain | Marks an archived item as eligible for policy evaluation | Scheduler starts inactive/dry-run |
+| Permanent delete | Removes the workflow through the n8n API and records an audit event | Archive state, permission, and literal `DELETAR` confirmation |
+
+> [!CAUTION]
+> Permanent deletion is irreversible at the workflow level. Exercise it only against disposable resources first, review the target and audit record, and type the literal confirmation `DELETAR`.
+
+## 🔒 Security boundaries
+
+- Secrets are file-backed and excluded from source, workflow JSON, and `.env` values.
+- Browser requests are validated through the n8n session/browser boundary.
+- Hook delivery uses a separate local token.
+- The sidecar has no host-published port by default.
+- The optional UI adapter is version-specific; the core API remains the safety boundary.
+- Retention is not active by default.
+- The Docker application process runs as a non-root user after secret bootstrap.
+
+> [!WARNING]
+> Do not paste hook tokens, cookies, OAuth values, customer workflow data, or production exports into issues, screenshots, logs, or chat. Use [SECURITY.md](docs/SECURITY.md) for responsible reports.
+
+## 📚 Documentation
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Installation — English](docs/INSTALL.md)
+- [Installation — Português do Brasil](docs/INSTALL.pt-BR.md)
+- [Security model](docs/SECURITY.md)
+- [Release contract](docs/RELEASE.md)
+- [GitHub Releases](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/releases)
+- [CI workflow](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/actions/workflows/ci.yml)
+
+## 🧪 Development checks
 
 ```bash
-docker compose \
-  --project-name workflow-recycle-bin \
-  --file deploy/docker-compose.sidecar.yml \
-  --env-file .env \
-  pull
+npm test
+npm run release:bundle
 
-docker compose \
-  --project-name workflow-recycle-bin \
-  --file deploy/docker-compose.sidecar.yml \
-  --env-file .env \
-  up -d
+cd cli
+npm test
+node src/cli.mjs --help
 ```
 
-## Security boundaries
+The CI also checks syntax, bundle contents, Docker buildability, CLI packaging, and whitespace. Keep release artifacts, `.env` files, secrets, customer data, and temporary tarballs out of commits.
 
-- API keys and hook tokens are file-backed, not stored in workflow JSON or `.env` values.
-- The sidecar uses the n8n session/browser boundary for browser requests.
-- Hooks authenticate to the sidecar with a separate local token.
-- The UI adapter is version-specific and optional; the core route remains the safety boundary.
-- Automatic retention starts in dry-run/inactive mode.
-- Never enable permanent deletion or automatic cleanup without a controlled read-only and disposable-resource test.
+## 📦 Distribution status
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/SECURITY.md`](docs/SECURITY.md), and [`docs/INSTALL.md`](docs/INSTALL.md).
+| Surface | Status |
+| --- | --- |
+| GitHub source | Public |
+| GitHub Release `v0.1.2` | Available |
+| GHCR image `:0.1.2` | Pushed; package visibility pending |
+| npm CLI | Prepared; publication pending npm scope authorization |
+| Runtime package | Private by design |
+
+## 📄 License
+
+MIT. See [LICENSE](LICENSE).
