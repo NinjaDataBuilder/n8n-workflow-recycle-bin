@@ -13,7 +13,7 @@ A guarded sidecar for **self-hosted n8n** that archives workflows, preserves ret
 > The public source repository and GitHub Release `v0.1.2` are available. The supported target is self-hosted n8n `2.32.x`, initially validated against n8n `2.32.5`.
 
 > [!WARNING]
-> The GHCR image has been built and pushed as `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin:0.1.2`, but the container package is currently private. The npm installer is prepared but not yet published. Use the GitHub Release bundle until those distribution surfaces are enabled.
+> The GHCR image has been built and pushed as `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin:0.1.2`, but the container package is currently private. The CLI is publicly available as `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.2`; use npm or the GitHub Release bundle according to your deployment process.
 
 <hr>
 
@@ -87,7 +87,18 @@ The installer operates alongside the existing deployment. It does not recreate n
 
 ## 🚀 Safe installation path
 
-### 1. Download the pinned release bundle
+### 1. Use the published CLI
+
+For a normal installation, use the pinned public CLI:
+
+```bash
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.2 doctor
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.2 install --help
+```
+
+The CLI performs preflight, backup, staging, Compose validation, and rollback checks. Use `--dry-run` before any deployment change.
+
+### 2. Download the pinned release bundle
 
 Use the GitHub Release asset and checksum instead of an unpinned branch archive:
 
@@ -100,7 +111,7 @@ gh release download v0.1.2 \
 sha256sum --check SHA256SUMS
 ```
 
-### 2. Run the preflight before changing a deployment
+### 3. Run the preflight before changing a deployment
 
 Extract the bundle into a staging directory and validate the target n8n version before mounting hooks or starting the sidecar.
 
@@ -110,7 +121,7 @@ cd workflow-recycle-bin-v0.1.2
 node scripts/preflight.mjs --n8n-version 2.32.5
 ```
 
-### 3. Configure only non-secret values
+### 4. Configure only non-secret values
 
 Copy `.env.example` to `.env` and set the existing network, internal n8n URL, and release version. Create the hook-token file separately with mode `600`.
 
@@ -119,7 +130,7 @@ install -m 600 /dev/null /opt/n8n/secrets/recycle-bin-hook-token
 # Write the token through your secret-management process; never place it in Git or chat.
 ```
 
-### 4. Render and review Compose
+### 5. Render and review Compose
 
 ```bash
 docker compose \
@@ -188,7 +199,7 @@ The CI also checks syntax, bundle contents, Docker buildability, CLI packaging, 
 | GitHub source | Public |
 | GitHub Release `v0.1.2` | Available |
 | GHCR image `:0.1.2` | Pushed; package visibility pending |
-| npm CLI | Prepared; publication pending npm scope authorization |
+| npm CLI `0.1.2` | Public on npm |
 | Runtime package | Private by design |
 
 ## 📄 License
