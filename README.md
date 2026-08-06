@@ -26,6 +26,7 @@ A guarded sidecar for **self-hosted n8n** that archives workflows, preserves ret
 | If you are... | Start with |
 | --- | --- |
 | Evaluating the project | [Architecture and supported target](#-architecture) |
+| Watching a real demonstration | [Workflow demonstration](#-demonstration) |
 | Installing for the first time | [Safe installation path](#-safe-installation-path) |
 | Reviewing risk | [Security boundaries](#-security-boundaries) |
 | Operating a deployment | [Installation guide](docs/INSTALL.md) |
@@ -44,6 +45,15 @@ The runtime combines:
 - retention metadata and scheduler support;
 - an audit store;
 - a CLI that stages, validates, upgrades, and uninstalls the sidecar.
+
+## 🎬 Demonstration
+
+[▶️ Watch the n8n Workflow Recycle Bin demonstration (MP4)](docs/assets/demo/n8n-workflow-recycle-bin-001.mp4)
+
+The demonstration shows a self-hosted n8n environment with archived workflows, retention status, search filters, restore controls, and guarded permanent deletion. It also shows how a workflow can move through a controlled lifecycle instead of remaining indefinitely in the active environment.
+
+> [!NOTE]
+> This video is a usage demonstration. Do not publish credentials, tokens, account identifiers, or production data in screenshots, recordings, or issue attachments.
 
 ## 🚫 What it is not
 
