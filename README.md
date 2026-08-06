@@ -48,14 +48,14 @@ The runtime combines:
 
 ## 🎬 Demonstration
 
-![Animated preview of the n8n Workflow Recycle Bin demonstration](https://raw.githubusercontent.com/NinjaDataBuilder/n8n-workflow-recycle-bin/main/docs/assets/demo/n8n-workflow-recycle-bin-preview.gif)
-
-[▶️ Open the full original demonstration video (MP4)](docs/assets/demo/n8n-workflow-recycle-bin-001.mp4)
+<video src="https://github.com/user-attachments/assets/bcdc7045-d9fb-412e-be38-a009051d4417" controls width="100%" aria-label="Demonstração do n8n Workflow Recycle Bin">
+  Seu navegador não conseguiu renderizar o vídeo. [Abrir a demonstração em vídeo](https://github.com/user-attachments/assets/bcdc7045-d9fb-412e-be38-a009051d4417).
+</video>
 
 The demonstration shows a self-hosted n8n environment with archived workflows, retention status, search filters, restore controls, and guarded permanent deletion. It also shows how a workflow can move through a controlled lifecycle instead of remaining indefinitely in the active environment.
 
 > [!NOTE]
-> This animated preview and the full video are usage demonstrations. Do not publish credentials, tokens, account identifiers, or production data in screenshots, recordings, or issue attachments.
+> This inline video is a usage demonstration. Do not publish credentials, tokens, account identifiers, or production data in screenshots, recordings, or issue attachments.
 
 ## 🚫 What it is not
 
