@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 
 const CLI_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_REPOSITORY = 'NinjaDataBuilder/n8n-workflow-recycle-bin';
-const SUPPORTED_N8N_LINE = /^2\.32\.\d+$/;
+const SUPPORTED_N8N_VERSIONS = new Set(['2.32.5', '2.35.3', '2.36.7']);
 
 export function parseArgs(argv) {
   if (argv[0]?.startsWith('--')) {
@@ -37,8 +37,8 @@ export function parseArgs(argv) {
 }
 
 export function assertSupportedN8nVersion(version) {
-  if (!version || !SUPPORTED_N8N_LINE.test(version)) {
-    throw new Error(`Unsupported n8n version: ${version ?? '(missing)'}. Supported line: 2.32.x`);
+  if (!version || !SUPPORTED_N8N_VERSIONS.has(version)) {
+    throw new Error(`Unsupported n8n version: ${version ?? '(missing)'}. Supported versions: ${[...SUPPORTED_N8N_VERSIONS].join(', ')}`);
   }
   return version;
 }

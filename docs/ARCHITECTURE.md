@@ -36,7 +36,7 @@ sidebar adapter
 
 ## Compatibility policy
 
-The first supported line is n8n `2.32.x`. Any other line is refused by the installer until tested and explicitly added to `src/compatibility.mjs`.
+The tested adapters currently cover n8n `2.32.5`, `2.35.3`, and `2.36.7`. Any other exact version is refused by the installer until tested and explicitly added to `src/compatibility.mjs`.
 
 ## Security policy
 

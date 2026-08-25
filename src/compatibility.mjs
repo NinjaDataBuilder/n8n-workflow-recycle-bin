@@ -6,6 +6,20 @@ export const SUPPORT_MATRIX = Object.freeze([
     sidebarAdapter: 'v2.32',
     status: 'supported',
   }),
+  Object.freeze({
+    exact: '2.36.7',
+    coreApi: true,
+    externalHooks: true,
+    sidebarAdapter: 'v2.36.7',
+    status: 'supported',
+  }),
+  Object.freeze({
+    exact: '2.35.3',
+    coreApi: true,
+    externalHooks: true,
+    sidebarAdapter: 'v2.35.3',
+    status: 'supported',
+  }),
 ]);
 
 function parseVersion(version) {
@@ -16,8 +30,9 @@ function parseVersion(version) {
 
 export function resolveCompatibility(version) {
   const parsed = parseVersion(version);
+  const versionString = `${parsed.major}.${parsed.minor}.${parsed.patch}`;
   const match = SUPPORT_MATRIX.find((entry) =>
-    entry.range === `${parsed.major}.${parsed.minor}.x`,
+    entry.exact === versionString || entry.range === `${parsed.major}.${parsed.minor}.x`,
   );
 
   if (!match) {
