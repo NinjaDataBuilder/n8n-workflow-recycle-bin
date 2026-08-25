@@ -28,6 +28,8 @@ const files = [
   'hooks',
   'scripts/preflight.mjs',
   'scripts/uninstall.sh',
+  'scripts/n8n-toolchain-compatibility-audit.py',
+  'scripts/n8n-toolchain-compatibility.json',
   'src',
 ];
 

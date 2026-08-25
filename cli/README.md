@@ -7,7 +7,7 @@
 The CLI installs, validates, upgrades, and uninstalls the [n8n Workflow Recycle Bin](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin) sidecar beside an existing self-hosted n8n deployment.
 
 > [!IMPORTANT]
-> The public package is available as `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.4`. Pin the version in production and run the preflight before changing a deployment.
+> The public package is available as `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5`. Pin the version in production and run the preflight before changing a deployment.
 
 > [!WARNING]
 > This CLI targets self-hosted n8n `2.32.5`, `2.35.3`, and `2.36.7` with Docker Compose. It does not support n8n Cloud and it never accepts a hook token as a command-line argument.
@@ -17,19 +17,19 @@ The CLI installs, validates, upgrades, and uninstalls the [n8n Workflow Recycle 
 Run a no-write health check first:
 
 ```bash
-npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.4 doctor
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5 doctor
 ```
 
 See the complete installer options before staging a deployment:
 
 ```bash
-npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.4 install --help
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5 install --help
 ```
 
 The CLI can also be installed globally when that matches your operating model:
 
 ```bash
-npm install --global @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.4
+npm install --global @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5
 ```
 
 ## 🔒 Safe installation model
@@ -60,7 +60,7 @@ node src/cli.mjs doctor \
 
 node src/cli.mjs install \
   --target /path/to/n8n-compose \
-  --version 0.1.4 \
+  --version 0.1.5 \
   --n8n-version 2.32.5 \
   --network n8n_default \
   --n8n-internal-url http://n8n:5678 \

@@ -1,6 +1,6 @@
 {
   "name": "@ninjadatabuilder/n8n-workflow-recycle-bin",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Safe installer CLI for the Workflow Recycle Bin sidecar for self-hosted n8n.",
   "type": "module",
   "bin": {

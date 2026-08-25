@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "description": "Exact n8n versions validated for the NinjaDataBuilder toolchain.",
+  "versions": {
+    "2.32.5": {
+      "recycleBin": "0.1.3",
+      "googleTagManager": "0.5.3",
+      "metaAds": "0.2.5",
+      "baserowSchemaAdmin": "0.1.4"
+    },
+    "2.35.3": {
+      "recycleBin": "0.1.3",
+      "googleTagManager": "0.5.5",
+      "metaAds": "0.2.5",
+      "baserowSchemaAdmin": "0.1.4"
+    },
+    "2.36.7": {
+      "recycleBin": "0.1.5",
+      "googleTagManager": "0.5.6",
+      "metaAds": "0.2.5",
+      "baserowSchemaAdmin": "0.1.4"
+    }
+  }
+}
