@@ -10,7 +10,7 @@ The CLI installs, validates, upgrades, and uninstalls the [n8n Workflow Recycle 
 > The public package is available as `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5`. Pin the version in production and run the preflight before changing a deployment.
 
 > [!WARNING]
-> This CLI targets self-hosted n8n `2.32.5`, `2.35.3`, and `2.36.7` with Docker Compose. It does not support n8n Cloud and it never accepts a hook token as a command-line argument.
+> This CLI targets self-hosted n8n `2.36.7` with the latest validated Recycle Bin `0.1.5` adapter. Previously stable validated adapters remain available for n8n `2.35.3` and `2.32.5`. It does not support n8n Cloud and it never accepts a hook token as a command-line argument.
 
 ## 🚀 Install
 
