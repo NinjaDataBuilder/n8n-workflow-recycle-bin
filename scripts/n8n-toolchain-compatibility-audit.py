@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import urllib.request
@@ -23,7 +24,18 @@ TOOLS = {
 
 def run(command: list[str], cwd: Path, timeout: int = 600) -> tuple[int, str]:
     try:
-        p = subprocess.run(command, cwd=cwd, text=True, capture_output=True, timeout=timeout)
+        # Cron has a minimal PATH; include the Hermes-managed Node/npm toolchain.
+        env = os.environ.copy()
+        env["PATH"] = ":".join(
+            [
+                "/home/ubuntu/.local/bin",
+                "/home/ubuntu/.hermes/node/bin",
+                "/usr/local/bin",
+                "/usr/bin",
+                "/bin",
+            ]
+        )
+        p = subprocess.run(command, cwd=cwd, env=env, text=True, capture_output=True, timeout=timeout)
         return p.returncode, (p.stdout + p.stderr)[-3000:]
     except Exception as exc:
         return 1, repr(exc)
@@ -99,6 +111,7 @@ def main() -> int:
             report["alerts"].append(f"testes falharam: {name}")
         if item.get("gitDirty"):
             item["status"] = "dirty" if code == 0 else "failed-dirty"
+            report["alerts"].append(f"alterações Git pendentes em {name}: bloquear release até revisão/commit.")
         if expected and name in expected and item["version"] != expected[name]:
             report["alerts"].append(f"versão divergente em {name}: local={item['version']} esperado={expected[name]}")
         report["tools"][name] = item
