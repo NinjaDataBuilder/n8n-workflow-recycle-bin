@@ -64,9 +64,13 @@ def package_version(path: Path) -> str:
     return str(data.get("version", "unknown"))
 
 
-def git_dirty(path: Path) -> bool:
+def git_state(path: Path) -> tuple[bool, bool]:
+    """Return (is_git_repository, has_uncommitted_changes)."""
+    code, out = run(["git", "rev-parse", "--is-inside-work-tree"], path, 60)
+    if code != 0 or out.strip().lower() != "true":
+        return False, False
     code, out = run(["git", "status", "--porcelain"], path, 60)
-    return code != 0 or bool(out.strip())
+    return True, code != 0 or bool(out.strip())
 
 
 def main() -> int:
@@ -100,7 +104,9 @@ def main() -> int:
             report["tools"][name] = item
             continue
         item["version"] = package_version(path)
-        item["gitDirty"] = git_dirty(path)
+        is_git_repository, git_dirty = git_state(path)
+        item["gitRepository"] = is_git_repository
+        item["gitDirty"] = git_dirty
         if expected and name in expected:
             item["expectedVersion"] = expected[name]
         code, output = run(command, path)
