@@ -1,4 +1,4 @@
-import { Z as h } from './vue.runtime.esm-bundler-DkMYNdGb.js';
+import { j as h } from './vue.runtime.esm-bundler-DkMYNdGb.js';
 
 export default {
   name: 'RecycleBinEmbeddedView',

@@ -18,3 +18,18 @@ test('router renders the same-origin recycle-bin iframe in the main panel', asyn
   assert.match(source, /title:`Workflow Recycle Bin`/);
   assert.match(source, /minHeight:`calc\(100vh - 48px\)`/);
 });
+
+test('n8n 2.36.8 router uses the imported VNode factory for the recycle-bin route', async () => {
+  const source = await asset('router-w5n5mhyJ.js');
+  const routeStart = source.indexOf('{path:`/home/recycle-bin`');
+  const catchAllStart = source.indexOf('{path:`/:pathMatch(.*)*`');
+  assert.match(source, /SENTRY_RELEASE=\{id:`n8n@2\.36\.8`\}/);
+  assert.match(source, /import\{[^}]*j as RecycleBinH[^}]*\}from\"\.\/vue\.runtime\.esm-bundler-DkMYNdGb\.js\"/);
+  assert.notEqual(routeStart, -1);
+  assert.notEqual(catchAllStart, -1);
+  assert.ok(routeStart < catchAllStart);
+
+  const route = source.slice(routeStart, catchAllStart);
+  assert.match(route, /render:\(\)=>RecycleBinH\(`iframe`,/);
+  assert.doesNotMatch(route, /render:\(\)=>Xn\(`iframe`,/);
+});
