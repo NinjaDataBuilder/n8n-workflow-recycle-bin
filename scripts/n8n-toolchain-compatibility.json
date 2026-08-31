@@ -14,6 +14,10 @@
       "metaAds": "0.2.5",
       "baserowSchemaAdmin": "0.1.4"
     },
+    "2.36.8": {
+      "recycleBin": "0.1.5",
+      "status": "validated"
+    },
     "2.36.7": {
       "recycleBin": "0.1.5",
       "googleTagManager": "0.5.6",

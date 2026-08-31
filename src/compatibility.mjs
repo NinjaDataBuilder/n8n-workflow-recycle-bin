@@ -7,6 +7,13 @@ export const SUPPORT_MATRIX = Object.freeze([
     status: 'supported',
   }),
   Object.freeze({
+    exact: '2.36.8',
+    coreApi: true,
+    externalHooks: true,
+    sidebarAdapter: 'v2.36.8',
+    status: 'supported',
+  }),
+  Object.freeze({
     exact: '2.36.7',
     coreApi: true,
     externalHooks: true,

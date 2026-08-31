@@ -13,6 +13,17 @@ test('supports the exact n8n 2.36.7 adapter', () => {
   });
 });
 
+test('supports the exact n8n 2.36.8 adapter', () => {
+  assert.deepEqual(assertCompatible('2.36.8'), {
+    exact: '2.36.8',
+    coreApi: true,
+    externalHooks: true,
+    sidebarAdapter: 'v2.36.8',
+    status: 'supported',
+    version: '2.36.8',
+  });
+});
+
 test('retains compatibility for the previously validated exact n8n 2.35.3 adapter', () => {
   assert.equal(assertCompatible('2.35.3').sidebarAdapter, 'v2.35.3');
 });
@@ -22,7 +33,7 @@ test('supports the original 2.32.5 reference adapter', () => {
 });
 
 test('refuses an untested patch or release before installation', () => {
-  const result = resolveCompatibility('2.36.8');
+  const result = resolveCompatibility('2.36.9');
   assert.equal(result.status, 'unsupported');
   assert.match(result.reason, /Installation must stop/);
   assert.throws(() => assertCompatible('2.33.0'), /Installation must stop/);

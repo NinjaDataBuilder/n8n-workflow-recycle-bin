@@ -59,7 +59,7 @@ await fs.chmod(join(stagingRoot, 'hooks/workflow-recycle-bin.cjs'), 0o644);
 const manifest = {
   product: 'workflow-recycle-bin',
   version,
-  n8nCompatibility: '2.36.7 (exact adapter; also retains tested 2.35.3 and 2.32.5 assets)',
+  n8nCompatibility: '2.36.8 (exact adapter; also retains tested 2.36.7, 2.35.3, and 2.32.5 assets)',
   archive: archiveName,
   generatedAt: new Date().toISOString(),
   contents: files.filter((entry) => entry !== 'README.md'),

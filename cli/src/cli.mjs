@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 
 const CLI_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_REPOSITORY = 'NinjaDataBuilder/n8n-workflow-recycle-bin';
-const SUPPORTED_N8N_VERSIONS = new Set(['2.32.5', '2.35.3', '2.36.7']);
+const SUPPORTED_N8N_VERSIONS = new Set(['2.32.5', '2.35.3', '2.36.7', '2.36.8']);
 
 export function parseArgs(argv) {
   if (argv[0]?.startsWith('--')) {

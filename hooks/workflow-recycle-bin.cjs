@@ -1,4 +1,4 @@
-// n8n 2.36.7 External Hooks adapter; compatibility is version-gated. Installed only by the version-aware bundle.
+// n8n 2.36.8 External Hooks adapter; compatibility is version-gated. Installed only by the version-aware bundle.
 // Secrets are read from local environment/secret files, never workflow data.
 const base = process.env.N8N_RECYCLE_BIN_SERVICE_URL;
 const token = process.env.N8N_RECYCLE_BIN_HOOK_TOKEN;
