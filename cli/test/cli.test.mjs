@@ -38,8 +38,9 @@ test('accepts the exact validated n8n versions and rejects untested versions', (
   assert.equal(assertSupportedN8nVersion('2.32.5'), '2.32.5');
   assert.equal(assertSupportedN8nVersion('2.35.3'), '2.35.3');
   assert.equal(assertSupportedN8nVersion('2.36.7'), '2.36.7');
+  assert.equal(assertSupportedN8nVersion('2.36.8'), '2.36.8');
   assert.throws(() => assertSupportedN8nVersion('2.33.0'), /Supported versions/);
-  assert.throws(() => assertSupportedN8nVersion('2.36.8'), /Supported versions/);
+  assert.throws(() => assertSupportedN8nVersion('2.36.9'), /Supported versions/);
 });
 
 test('doctor validates a target without printing secrets', async () => {
