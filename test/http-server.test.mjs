@@ -49,7 +49,7 @@ test('exposes health and protects browser and hook endpoints', async (t) => {
   assert.equal(retentionModule.status, 200);
   assert.equal(retentionModule.headers.get('content-type'), 'text/javascript; charset=utf-8');
   assert.match(await retentionModule.text(), /Retention paused/);
-  for (const asset of ['WorkflowsView-NnKQLkxf.js', 'WorkflowsView-legacy-jnvFs9qm.js']) {
+  for (const asset of ['WorkflowsView-DXEKXJlz.js', 'WorkflowsView-legacy-CacAe4pf.js', 'WorkflowsView-NnKQLkxf.js', 'WorkflowsView-legacy-jnvFs9qm.js']) {
     const adapter = await fetch(`${app.base}/assets/${asset}`);
     assert.equal(adapter.status, 200);
     assert.equal(adapter.headers.get('content-type'), 'text/javascript; charset=utf-8');

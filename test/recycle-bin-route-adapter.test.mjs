@@ -33,3 +33,28 @@ test('n8n 2.36.8 router uses the imported VNode factory for the recycle-bin rout
   assert.match(route, /render:\(\)=>RecycleBinH\(`iframe`,/);
   assert.doesNotMatch(route, /render:\(\)=>Xn\(`iframe`,/);
 });
+
+test('n8n 2.39.7 modern router uses the imported VNode factory for the recycle-bin route', async () => {
+  const source = await asset('router-D3Wygr1N.js');
+  const routeStart = source.indexOf('{path:`/home/recycle-bin`');
+  const catchAllStart = source.indexOf('{path:`/:pathMatch(.*)*`');
+  assert.match(source, /SENTRY_RELEASE=\{id:`n8n@2\.39\.7`\}/);
+  assert.match(source, /import\{[^}]*j as d[^}]*\}from\"\.\/vue\.runtime\.esm-bundler-CI7KXqJ7\.js\"/);
+  assert.notEqual(routeStart, -1);
+  assert.notEqual(catchAllStart, -1);
+  assert.ok(routeStart < catchAllStart);
+  const route = source.slice(routeStart, catchAllStart);
+  assert.match(route, /render:\(\)=>d\(`iframe`,/);
+});
+
+test('n8n 2.39.7 legacy router uses the imported VNode factory for the recycle-bin route', async () => {
+  const source = await asset('router-legacy-BmD_qHuX.js');
+  const routeStart = source.indexOf('{path:"/home/recycle-bin"');
+  const catchAllStart = source.indexOf('{path:"/:pathMatch(.*)*"');
+  assert.match(source, /SENTRY_RELEASE=\{id:"n8n@2\.39\.7"\}/);
+  assert.notEqual(routeStart, -1);
+  assert.notEqual(catchAllStart, -1);
+  assert.ok(routeStart < catchAllStart);
+  const route = source.slice(routeStart, catchAllStart);
+  assert.match(route, /render:\(\)=>d\("iframe",/);
+});

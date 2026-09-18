@@ -13,6 +13,17 @@ test('supports the exact n8n 2.36.7 adapter', () => {
   });
 });
 
+test('supports the exact n8n 2.39.7 adapter', () => {
+  assert.deepEqual(assertCompatible('2.39.7'), {
+    exact: '2.39.7',
+    coreApi: true,
+    externalHooks: true,
+    sidebarAdapter: 'v2.39.7',
+    status: 'supported',
+    version: '2.39.7',
+  });
+});
+
 test('supports the exact n8n 2.36.8 adapter', () => {
   assert.deepEqual(assertCompatible('2.36.8'), {
     exact: '2.36.8',

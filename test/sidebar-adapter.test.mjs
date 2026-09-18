@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-for (const asset of ['AppSidebar-D4gkYkoF.js', 'AppSidebar-legacy-DbJ0tmeN.js']) {
+for (const asset of ['AppSidebar-D4gkYkoF.js', 'AppSidebar-legacy-DbJ0tmeN.js', 'AppSidebar-Dn7O3Bz_.js', 'AppSidebar-legacy-BreZoRfs.js']) {
   test(`${asset} exposes the recycle-bin shortcut before Templates`, async () => {
     const source = await readFile(new URL(`../app/public/assets/${asset}`, import.meta.url), 'utf8');
     const shortcut = source.indexOf('id:`recycle-bin`') >= 0
