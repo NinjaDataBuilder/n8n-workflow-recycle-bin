@@ -3,7 +3,7 @@
   "description": "Exact n8n versions validated for the NinjaDataBuilder toolchain.",
   "versions": {
     "2.39.7": {
-      "recycleBin": "0.1.5",
+      "recycleBin": "0.1.6",
       "status": "source-validated"
     },
     "2.32.5": {

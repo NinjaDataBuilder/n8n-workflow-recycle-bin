@@ -15,7 +15,7 @@ The optional community node, if created later, must use a separate package name 
 
 - Git tag: `vX.Y.Z`;
 - root runtime version and CLI version must equal `X.Y.Z`;
-- supported n8n line: `2.32.x`;
+- supported n8n line: `2.39.7` exact adapter; previous exact adapters remain listed in the compatibility matrix;
 - release bundle: `workflow-recycle-bin-vX.Y.Z.tar.gz`;
 - checksum file: `SHA256SUMS`;
 - image tags: `X.Y.Z` and immutable commit tag; no `latest` tag.
@@ -37,7 +37,7 @@ Creating a tag is the publication authorization boundary. Do not create or push 
 - the public repository has been created under the NinjaDataBuilder organization;
 - GHCR and npm trusted publishing are configured;
 - the version and release notes are approved;
-- the n8n `2.32.x` compatibility limitation is visible in the release notes;
+- the n8n `2.39.7` compatibility limitation is visible in the release notes;
 - rollback/support ownership is understood.
 
 A green local build or a valid workflow file is not publication evidence.

@@ -14,10 +14,10 @@
 A guarded sidecar for **self-hosted n8n** that archives workflows, preserves retention metadata, supports reversible restore, and protects permanent deletion behind explicit confirmation.
 
 > [!IMPORTANT]
-> The current release is `v0.1.5`, updated for the recent self-hosted n8n `2.36.7` release. The previously stable validated adapters remain available for n8n `2.35.3` and `2.32.5`.
+> The current release is `v0.1.6`, updated for the exact self-hosted n8n `2.39.7` adapter. Previously stable validated adapters remain available for n8n `2.36.8`, `2.36.7`, `2.35.3`, and `2.32.5`.
 
 > [!WARNING]
-> The GHCR image is deployed as `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin:0.1.5-n8n2367-hotfix2`. The CLI release is `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5`; use npm or the GitHub Release bundle according to your deployment process.
+> The versioned GHCR image is `ghcr.io/ninjadatabuilder/n8n-workflow-recycle-bin:0.1.6`. The CLI release is `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.6`; use npm or the GitHub Release bundle according to your deployment process.
 
 <hr>
 
@@ -30,7 +30,7 @@ A guarded sidecar for **self-hosted n8n** that archives workflows, preserves ret
 | Installing for the first time | [Safe installation path](#-safe-installation-path) |
 | Reviewing risk | [Security boundaries](#-security-boundaries) |
 | Operating a deployment | [Installation guide](docs/INSTALL.md) |
-| Reviewing the release | [Release notes and assets](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/releases/tag/v0.1.5) |
+| Reviewing the release | [Release notes and assets](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/releases/tag/v0.1.6) |
 | Contributing or debugging | [Development checks](#-development-checks) |
 
 ## 🎯 What it is
@@ -92,15 +92,15 @@ The installer operates alongside the existing deployment. It does not recreate n
 | Requirement | Initial support |
 | --- | --- |
 | n8n | Self-hosted, exact validated versions only |
-| Latest validated adapter | n8n `2.36.7` with Recycle Bin `0.1.5` |
-| Previously stable validated adapters | n8n `2.35.3` and `2.32.5` with Recycle Bin `0.1.3` |
+| Latest validated adapter | n8n `2.39.7` with Recycle Bin `0.1.6` |
+| Previously stable validated adapters | n8n `2.36.8`, `2.36.7`, `2.35.3`, and `2.32.5` with their corresponding Recycle Bin releases |
 | Runtime | Node.js `22+` |
 | Deployment | Docker Engine with Compose plugin |
 | Network | Existing external Docker network shared with n8n |
 | Cloud | n8n Cloud is not supported by this sidecar architecture |
 
 > [!NOTE]
-> Compatibility is intentionally exact. The latest validated adapter targets n8n `2.36.7`; the previously stable validated adapters target n8n `2.35.3` and `2.32.5`. Do not infer compatibility with an unlisted patch or release.
+> Compatibility is intentionally exact. The latest validated adapter targets n8n `2.39.7`; previously stable validated adapters target n8n `2.36.8`, `2.36.7`, `2.35.3`, and `2.32.5`. Do not infer compatibility with an unlisted patch or release.
 
 ## 🚀 Safe installation path
 
@@ -109,8 +109,8 @@ The installer operates alongside the existing deployment. It does not recreate n
 For a normal installation, use the pinned public CLI:
 
 ```bash
-npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5 doctor
-npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5 install --help
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.6 doctor
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.6 install --help
 ```
 
 The CLI performs preflight, backup, staging, Compose validation, and rollback checks. Use `--dry-run` before any deployment change.
@@ -120,9 +120,9 @@ The CLI performs preflight, backup, staging, Compose validation, and rollback ch
 Use the GitHub Release asset and checksum instead of an unpinned branch archive:
 
 ```bash
-gh release download v0.1.3 \
+gh release download v0.1.6 \
   --repo NinjaDataBuilder/n8n-workflow-recycle-bin \
-  --pattern 'workflow-recycle-bin-v0.1.3.tar.gz' \
+  --pattern 'workflow-recycle-bin-v0.1.6.tar.gz' \
   --pattern 'SHA256SUMS'
 
 sha256sum --check SHA256SUMS
@@ -133,9 +133,9 @@ sha256sum --check SHA256SUMS
 Extract the bundle into a staging directory and validate the target n8n version before mounting hooks or starting the sidecar.
 
 ```bash
-tar -xzf workflow-recycle-bin-v0.1.3.tar.gz
-cd workflow-recycle-bin-v0.1.3
-node scripts/preflight.mjs --n8n-version 2.32.5
+tar -xzf workflow-recycle-bin-v0.1.6.tar.gz
+cd workflow-recycle-bin-v0.1.6
+node scripts/preflight.mjs --n8n-version 2.39.7
 ```
 
 ### 4. Configure only non-secret values
@@ -214,9 +214,9 @@ The CI also checks syntax, bundle contents, Docker buildability, CLI packaging, 
 | Surface | Status |
 | --- | --- |
 | GitHub source | Public |
-| GitHub Release `v0.1.5` | Available |
-| GHCR image `:0.1.5-n8n2367-hotfix2` | Deployed; package visibility managed separately |
-| npm CLI `0.1.5` | Release prepared; publication requires npm 2FA confirmation |
+| GitHub Release `v0.1.6` | Pending publication |
+| GHCR image `:0.1.6` | Release workflow publishes the versioned image |
+| npm CLI `0.1.6` | Pending publication |
 | Runtime package | Private by design |
 
 ## 📄 License

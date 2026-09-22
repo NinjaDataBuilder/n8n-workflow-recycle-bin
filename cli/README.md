@@ -7,29 +7,29 @@
 The CLI installs, validates, upgrades, and uninstalls the [n8n Workflow Recycle Bin](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin) sidecar beside an existing self-hosted n8n deployment.
 
 > [!IMPORTANT]
-> The public package is available as `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5`. Pin the version in production and run the preflight before changing a deployment.
+> The public package is available as `@ninjadatabuilder/n8n-workflow-recycle-bin@0.1.6`. Pin the version in production and run the preflight before changing a deployment.
 
 > [!WARNING]
-> This CLI targets self-hosted n8n `2.36.7` with the latest validated Recycle Bin `0.1.5` adapter. Previously stable validated adapters remain available for n8n `2.35.3` and `2.32.5`. It does not support n8n Cloud and it never accepts a hook token as a command-line argument.
+> This CLI targets self-hosted n8n `2.39.7` with the latest validated Recycle Bin `0.1.6` adapter. Previously stable validated adapters remain available for n8n `2.36.8`, `2.36.7`, `2.35.3`, and `2.32.5`. It does not support n8n Cloud and it never accepts a hook token as a command-line argument.
 
 ## 🚀 Install
 
 Run a no-write health check first:
 
 ```bash
-npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5 doctor
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.6 doctor
 ```
 
 See the complete installer options before staging a deployment:
 
 ```bash
-npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5 install --help
+npx @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.6 install --help
 ```
 
 The CLI can also be installed globally when that matches your operating model:
 
 ```bash
-npm install --global @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.5
+npm install --global @ninjadatabuilder/n8n-workflow-recycle-bin@0.1.6
 ```
 
 ## 🔒 Safe installation model
@@ -55,13 +55,13 @@ From the repository checkout:
 ```bash
 node src/cli.mjs doctor \
   --target /path/to/n8n-compose \
-  --version 2.32.5 \
+  --version 2.39.7 \
   --network n8n_default
 
 node src/cli.mjs install \
   --target /path/to/n8n-compose \
-  --version 0.1.5 \
-  --n8n-version 2.32.5 \
+  --version 0.1.6 \
+  --n8n-version 2.39.7 \
   --network n8n_default \
   --n8n-internal-url http://n8n:5678 \
   --hook-token-file /path/to/recycle-bin-hook-token \
