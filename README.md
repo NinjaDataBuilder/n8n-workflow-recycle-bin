@@ -214,9 +214,9 @@ The CI also checks syntax, bundle contents, Docker buildability, CLI packaging, 
 | Surface | Status |
 | --- | --- |
 | GitHub source | Public |
-| GitHub Release `v0.1.6` | Pending publication |
-| GHCR image `:0.1.6` | Release workflow publishes the versioned image |
-| npm CLI `0.1.6` | Pending publication |
+| GitHub Release `v0.1.6` | Available |
+| GHCR image `:0.1.6` | Published; package visibility is currently private |
+| npm CLI `0.1.6` | Available on npm |
 | Runtime package | Private by design |
 
 ## 📄 License
