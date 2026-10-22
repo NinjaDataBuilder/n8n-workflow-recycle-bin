@@ -16,7 +16,7 @@ test('restore UI uses the native authenticated n8n unarchive route', async () =>
 test('permanent delete requires literal confirmation and stays server-mediated', async () => {
   const html = await readFile(htmlPath, 'utf8');
   assert.match(html, /permanentDelete\.disabled = !item\.canDelete/);
-  assert.match(html, /confirmationText !== 'DELETAR'/);
+  assert.match(html, /confirmationText !== 'DELETE'/);
   assert.match(html, /fetch\(`api\/recycle-bin\/\$\{encodeURIComponent\(item\.workflowId\)\}\/permanent-delete/);
   assert.doesNotMatch(html, /fetch\(`\/api\/recycle-bin\/\$\{encodeURIComponent\(item\.workflowId\)\}\/permanent-delete/);
   assert.doesNotMatch(html, /method: 'DELETE'/);
@@ -45,7 +45,7 @@ test('search UI creates removable comma-delimited tags and uses the n8n page tit
   assert.match(html, /retention-fill/);
   assert.match(html, /setInterval\(\(\) => \{ if \(!loading && items\.length > 0\) render\(\); \}, 60000\)/);
   assert.match(html, /permanentDelete\.disabled = !item\.canDelete/);
-  assert.match(html, /confirmationText !== 'DELETAR'/);
+  assert.match(html, /confirmationText !== 'DELETE'/);
   assert.match(html, /appendSearchTerm/);
   assert.match(html, /consumeDelimitedInput/);
   assert.match(html, /event\.key === ',' \|\| event\.key === 'Enter'/);

@@ -152,8 +152,8 @@
     }
 
     async function permanentlyDeleteWorkflow(item, button) {
-      const confirmationText = window.prompt(`To permanently delete “${item.workflowName}”, type DELETAR.`);
-      if (confirmationText !== 'DELETAR') {
+      const confirmationText = window.prompt(`To permanently delete “${item.workflowName}”, type DELETE.`);
+      if (confirmationText !== 'DELETE') {
         showNotice('Deletion cancelled.');
         return;
       }

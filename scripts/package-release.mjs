@@ -27,6 +27,7 @@ const files = [
   'docs',
   'hooks',
   'scripts/preflight.mjs',
+  'scripts/generate-n8n-2445-adapter.mjs',
   'scripts/uninstall.sh',
   'scripts/n8n-toolchain-compatibility-audit.py',
   'scripts/n8n-toolchain-compatibility.json',
@@ -43,7 +44,13 @@ for (const relativePath of files) {
   try {
     const stat = await fs.stat(source);
     if (stat.isDirectory()) {
-      await fs.cp(source, destination, { recursive: true });
+      await fs.cp(source, destination, {
+        recursive: true,
+        filter: (path) => !path.includes('/n8n-2.44.5-native') && ![
+          'app-0aL7xNtl.js', 'AppSidebar-DqEHFut7.js', 'WorkflowsView-DXcBW1OL.js',
+          'RecycleBinEmbeddedView-n8n-2.44.5.js',
+        ].includes(path.split('/').at(-1)),
+      });
     } else {
       await fs.mkdir(dirname(destination), { recursive: true });
       await fs.copyFile(source, destination);

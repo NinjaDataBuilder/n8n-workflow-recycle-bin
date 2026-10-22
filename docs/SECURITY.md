@@ -11,7 +11,7 @@ In n8n `2.32.x`, `n8n.ready` provides an Express server (`server.app`), but a ro
 ```text
 Sidebar/UI adapter (same n8n origin and authenticated user session)
   → invokes only version-tested n8n workflow lifecycle operations
-  → renders the DELETAR confirmation
+  → renders the DELETE confirmation
 
 Recycle Bin sidecar (private network)
   → receives authenticated archive/restore audit events from hooks

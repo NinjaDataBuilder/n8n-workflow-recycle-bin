@@ -1,6 +1,6 @@
 const DAY_MS = 24 * 60 * 60 * 1000;
 export const DEFAULT_RETENTION_DAYS = 30;
-export const PERMANENT_DELETE_CONFIRMATION = 'DELETAR';
+export const PERMANENT_DELETE_CONFIRMATION = 'DELETE';
 
 function requireIsoDate(value, label) {
   const date = new Date(value);

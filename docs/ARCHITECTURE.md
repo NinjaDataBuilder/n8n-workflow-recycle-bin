@@ -2,7 +2,7 @@
 
 ## Product objective
 
-Provide a portable recycle-bin experience for **self-hosted n8n**. A workflow is archived first, retained for 30 days by default, then eligible for permanent deletion. Immediate deletion requires an explicit irreversible-action dialog and typing `DELETAR` in the localized UI.
+Provide a portable recycle-bin experience for **self-hosted n8n**. A workflow is archived first, retained for 30 days by default, then eligible for permanent deletion. Immediate deletion requires an explicit irreversible-action dialog and typing `DELETE` in the localized UI.
 
 ## Boundaries
 

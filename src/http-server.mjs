@@ -14,6 +14,10 @@ const STATIC_HEADERS = Object.freeze({
 
 async function staticAsset(pathname) {
   const files = {
+    '/assets/app-0aL7xNtl.js': ['assets/app-0aL7xNtl.js', 'text/javascript; charset=utf-8'],
+    '/assets/AppSidebar-DqEHFut7.js': ['assets/AppSidebar-DqEHFut7.js', 'text/javascript; charset=utf-8'],
+    '/assets/WorkflowsView-DXcBW1OL.js': ['assets/WorkflowsView-DXcBW1OL.js', 'text/javascript; charset=utf-8'],
+    '/assets/RecycleBinEmbeddedView-n8n-2.44.5.js': ['assets/RecycleBinEmbeddedView-n8n-2.44.5.js', 'text/javascript; charset=utf-8'],
     '/': ['index.html', 'text/html; charset=utf-8'],
     '/assets/recycle-bin-trash.svg': ['assets/recycle-bin-trash.svg', 'image/svg+xml'],
     '/assets/workflow-search.mjs': ['assets/workflow-search.mjs', 'text/javascript; charset=utf-8'],

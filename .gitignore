@@ -22,3 +22,12 @@ npm-debug.log*
 .DS_Store
 .idea/
 .vscode/
+
+# Exact frontend inputs and generated candidates are build outputs, not source.
+app/public/assets/n8n-2.44.5-native/
+app/public/assets/app-0aL7xNtl.js
+app/public/assets/AppSidebar-DqEHFut7.js
+app/public/assets/WorkflowsView-DXcBW1OL.js
+app/public/assets/RecycleBinEmbeddedView-n8n-2.44.5.js
+*.log
+candidate-evidence.json

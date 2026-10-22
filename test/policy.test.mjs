@@ -30,12 +30,12 @@ test('allows scheduled deletion only after retention has elapsed', () => {
   assert.throws(() => authorizePermanentDelete(archivedWorkflow, { mode: 'scheduled' }, { now: '2026-07-30T10:00:00.000Z' }), /Retention period/);
 });
 
-test('requires literal DELETAR for immediate permanent deletion', () => {
-  assert.throws(() => authorizePermanentDelete(archivedWorkflow, { mode: 'immediate', confirmationText: 'DELETE' }), /DELETAR/);
-  assert.equal(authorizePermanentDelete(archivedWorkflow, { mode: 'immediate', confirmationText: 'DELETAR' }).mode, 'immediate');
+test('requires literal DELETE for immediate permanent deletion', () => {
+  assert.throws(() => authorizePermanentDelete(archivedWorkflow, { mode: 'immediate', confirmationText: 'delete' }), /DELETE/);
+  assert.equal(authorizePermanentDelete(archivedWorkflow, { mode: 'immediate', confirmationText: 'DELETE' }).mode, 'immediate');
 });
 
 test('never permits protected or active workflows to be permanently deleted', () => {
-  assert.throws(() => authorizePermanentDelete(archivedWorkflow, { mode: 'immediate', confirmationText: 'DELETAR' }, { protectedWorkflowIds: ['wf-trash-1'] }), /Protected/);
-  assert.throws(() => authorizePermanentDelete({ ...archivedWorkflow, isArchived: false }, { mode: 'immediate', confirmationText: 'DELETAR' }), /Only archived/);
+  assert.throws(() => authorizePermanentDelete(archivedWorkflow, { mode: 'immediate', confirmationText: 'DELETE' }, { protectedWorkflowIds: ['wf-trash-1'] }), /Protected/);
+  assert.throws(() => authorizePermanentDelete({ ...archivedWorkflow, isArchived: false }, { mode: 'immediate', confirmationText: 'DELETE' }), /Only archived/);
 });

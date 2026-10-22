@@ -168,10 +168,10 @@ See the complete [installation guide](docs/INSTALL.md) and [Portuguese guide](do
 | Archive | Keeps the workflow recoverable and records retention metadata | Authenticated n8n session and hook token |
 | Restore | Returns the workflow through the n8n API | Valid session and resource visibility |
 | Retain | Marks an archived item as eligible for policy evaluation | Scheduler starts inactive/dry-run |
-| Permanent delete | Removes the workflow through the n8n API and records an audit event | Archive state, permission, and literal `DELETAR` confirmation |
+| Permanent delete | Removes the workflow through the n8n API and records an audit event | Archive state, permission, and literal `DELETE` confirmation |
 
 > [!CAUTION]
-> Permanent deletion is irreversible at the workflow level. Exercise it only against disposable resources first, review the target and audit record, and type the literal confirmation `DELETAR`.
+> Permanent deletion is irreversible at the workflow level. Exercise it only against disposable resources first, review the target and audit record, and type the literal confirmation `DELETE`.
 
 ## 🔒 Security boundaries
 
