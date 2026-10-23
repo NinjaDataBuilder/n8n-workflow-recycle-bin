@@ -30,6 +30,16 @@ export function patchApp(source) {
   const route = '{path:`/home/recycle-bin`,name:`recycle-bin`,component:()=>import("./RecycleBinEmbeddedView-n8n-2.44.5.js"),meta:{middleware:[`authenticated`]}},';
   return replaceOnce(source, anchor, route + anchor);
 }
+export function renderRootBasePath(source) {
+  // n8n renders these build placeholders when serving app JS over HTTP.
+  // The sidecar bypasses that handler, so mirror its observed root-only result.
+  const encoded = '/%7B%7BBASE_PATH%7D%7D/';
+  const raw = '/{{BASE_PATH}}/';
+  if (source.split(encoded).length !== 6 || source.split(raw).length !== 2) {
+    throw new Error('Unexpected exact 2.44.5 base-path placeholder shape');
+  }
+  return source.replaceAll(encoded, '/').replaceAll(raw, '/');
+}
 export function patchSidebar(source) {
   const anchor = '{id:`templates`';
   if (!source.includes(anchor) || source.includes('id:`recycle-bin`')) throw new Error('Unexpected sidebar adapter anchor');
@@ -49,7 +59,7 @@ export async function generateAdapter(sourceDir, outputDir) {
   // This public vendor export is Vue's h() factory, not openBlock/createElementBlock.
   if (!sources['vendor-COD0pq0C.js'].includes('Ea as qd') || !sources['vendor-COD0pq0C.js'].includes('function Ea(e,t,n)')) throw new Error('Verified Vue h export is unavailable');
   const files = {
-    'app-0aL7xNtl.js': patchApp(sources['app-0aL7xNtl.js']),
+    'app-0aL7xNtl.js': patchApp(renderRootBasePath(sources['app-0aL7xNtl.js'])),
     'AppSidebar-DqEHFut7.js': patchSidebar(sources['AppSidebar-DqEHFut7.js']),
     'WorkflowsView-DXcBW1OL.js': patchWorkflows(sources['WorkflowsView-DXcBW1OL.js']),
     'RecycleBinEmbeddedView-n8n-2.44.5.js': EMBEDDED_VIEW,

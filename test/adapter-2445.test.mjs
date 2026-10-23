@@ -5,6 +5,19 @@ import { readFile } from 'node:fs/promises';
 
 const generator = new URL('../scripts/generate-n8n-2445-adapter.mjs', import.meta.url);
 
+test('exact 2.44.5 app adapter renders the same root base-path placeholders as n8n HTTP serving', async () => {
+  const { renderRootBasePath } = await import(generator.href);
+  assert.equal(typeof renderRootBasePath, 'function');
+  const encoded = '/%7B%7BBASE_PATH%7D%7D/';
+  const raw = '/{{BASE_PATH}}/';
+  const synthetic = Array(5).fill(encoded + 'assets/chunk.js').join('\n') + '\n' + raw + '\nwindow.BASE_PATH';
+  const rendered = renderRootBasePath(synthetic);
+  assert.equal(rendered, Array(5).fill('/assets/chunk.js').join('\n') + '\n/\nwindow.BASE_PATH');
+  assert.doesNotMatch(rendered, /%7B%7BBASE_PATH%7D%7D|\{\{BASE_PATH\}\}/);
+  assert.throws(() => renderRootBasePath('unknown upstream shape'), /base.path/i);
+  assert.throws(() => renderRootBasePath(encoded + raw), /base.path/i);
+});
+
 test('sidecar explicitly allow-lists each new exact 2.44.5 asset without broad file serving', async () => {
   const source = await readFile(new URL('../src/http-server.mjs', import.meta.url), 'utf8');
   for (const name of ['app-0aL7xNtl.js', 'AppSidebar-DqEHFut7.js', 'WorkflowsView-DXcBW1OL.js', 'RecycleBinEmbeddedView-n8n-2.44.5.js']) {
