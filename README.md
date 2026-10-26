@@ -1,5 +1,7 @@
 # 🗑️ n8n Workflow Recycle Bin
 
+> n8n 2.44.5: [validation checkpoint](docs/compatibility/n8n-2.44.5.md). This is a maintenance source checkpoint, not a new npm release or blanket provider approval.
+
 [![CI](https://img.shields.io/github/actions/workflow/status/NinjaDataBuilder/n8n-workflow-recycle-bin/ci.yml?branch=main&label=CI)](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/NinjaDataBuilder/n8n-workflow-recycle-bin?display_name=tag&label=release)](https://github.com/NinjaDataBuilder/n8n-workflow-recycle-bin/releases)
 [![License](https://img.shields.io/github/license/NinjaDataBuilder/n8n-workflow-recycle-bin)](LICENSE)

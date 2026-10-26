@@ -1,7 +1,24 @@
 {
   "schemaVersion": 1,
-  "description": "Exact n8n versions validated for the NinjaDataBuilder toolchain.",
+  "description": "Exact n8n versions with recorded validation scope and explicit release gates.",
   "versions": {
+    "2.44.5": {
+      "recycleBin": "0.1.8",
+      "recycleBinCli": "0.1.8",
+      "googleTagManager": "0.5.8",
+      "metaAds": "0.2.8",
+      "baserowSchemaAdmin": "0.1.5",
+      "status": "validation-incomplete",
+      "recordedAt": "2026-10-26",
+      "releaseReady": false,
+      "evidence": "docs/compatibility/n8n-2.44.5.md",
+      "releaseBlockers": [
+        "Google Tag Manager: reconectar a credencial OAuth de leitura e repetir a consulta real",
+        "Meta Ads Management: renovar o token expirado e repetir a consulta real",
+        "Recycle Bin: concluir a validação no editor autenticado (acesso ao navegador pendente)",
+        "Recycle Bin CLI: n8n 2.44.5 ainda não foi habilitado no instalador; aguardar validação visual"
+      ]
+    },
     "2.39.7": {
       "recycleBin": "0.1.6",
       "status": "source-validated"

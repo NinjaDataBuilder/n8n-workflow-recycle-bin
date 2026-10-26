@@ -18,7 +18,7 @@ TOOLS = {
     "recycleBinCli": (ROOT / "cli", ["npm", "test"]),
     "googleTagManager": (Path("/home/ubuntu/ninjadatabuilder-n8n-nodes-google-tag-manager"), ["npm", "test"]),
     "metaAds": (Path("/home/ubuntu/ninjadatabuilder-meta-ads"), ["npm", "test"]),
-    "baserowSchemaAdmin": (Path("/home/ubuntu/ninjadatabuilder-baserow-schema"), ["npm", "test"]),
+    "baserowSchemaAdmin": (Path("/home/ubuntu/ninjadatabuilder-n8n-nodes-baserow-schema-admin"), ["npm", "test"]),
 }
 
 
@@ -96,6 +96,20 @@ def main() -> int:
     elif latest and latest != version:
         report["alerts"].append(f"n8n live={version}, stable={latest}; preparar upgrade controlado antes de publicar ferramentas.")
 
+    if expected:
+        # Recording evidence is not the same as approving a release.
+        blockers = expected.get("releaseBlockers", [])
+        valid_blockers = isinstance(blockers, list) and all(
+            isinstance(reason, str) and bool(reason.strip()) for reason in blockers
+        )
+        incomplete = expected.get("status") not in (None, "validated", "source-validated")
+        unapproved = expected.get("releaseReady", True) is not True
+        if not valid_blockers or blockers or incomplete or unapproved:
+            reasons = blockers if valid_blockers and blockers else [
+                "compatibilidade registrada, mas a validação para release ainda está incompleta"
+            ]
+            report["alerts"].extend(f"n8n {version}: {reason}; bloquear release." for reason in reasons)
+
     for name, (path, command) in TOOLS.items():
         item = {"path": str(path), "exists": path.is_dir()}
         if not path.is_dir():
@@ -123,6 +137,7 @@ def main() -> int:
         report["tools"][name] = item
 
     report["status"] = "ok" if not report["alerts"] else "alert"
+    report["releaseReady"] = report["status"] == "ok"
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     elif report["alerts"]:
